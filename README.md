@@ -45,8 +45,6 @@ This will fetch the top YouTube channels from Nepal (default country code: NP) a
 📂 Project Root
 ├── 📂 src
 │   ├── main.py  # Main script to fetch and analyze YouTube data
-│   ├── utils.py  # Utility functions (if needed)
-├── .env  # Contains the API key
 ├── requirements.txt  # List of dependencies
 ├── README.md  # Project documentation
 ```
