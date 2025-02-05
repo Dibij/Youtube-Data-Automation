@@ -1,6 +1,3 @@
-Here’s an improved version of your `README.md` that organizes the sections better, provides clear instructions, and addresses potential issues like file structure and usage.
-
-```markdown
 # YouTube API Analyzer
 
 ## Overview
