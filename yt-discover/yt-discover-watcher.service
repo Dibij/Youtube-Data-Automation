@@ -1,0 +1,20 @@
+[Unit]
+Description=yt-discover Brave watcher (starts the local feed with Brave)
+Documentation=file://%h/.local/share/yt-discover/README.md
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env python3 %h/.local/share/yt-discover/watcher.py
+WorkingDirectory=%h/.local/share/yt-discover
+EnvironmentFile=-%h/.config/yt-discover/env
+Environment=PYTHONUNBUFFERED=1
+Restart=on-failure
+RestartSec=3
+# The server runs in its own process group; control-group kill makes sure it
+# cannot outlive the watcher.
+KillMode=control-group
+TimeoutStopSec=20
+
+[Install]
+WantedBy=default.target

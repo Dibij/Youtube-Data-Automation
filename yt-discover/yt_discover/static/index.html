@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>yt-discover</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">yt<span>·</span>discover</div>
+  <div class="quickadd">
+    <input id="topic-input" type="text" placeholder="Add a topic" autocomplete="off" spellcheck="false">
+    <select id="topic-lane" aria-label="Topic lane">
+      <option value="core">core</option>
+      <option value="neighbour">neighbour</option>
+      <option value="wildcard">wildcard</option>
+    </select>
+    <select id="topic-intent" aria-label="Topic intent">
+      <option value="learning">learning</option>
+      <option value="fun">fun</option>
+    </select>
+    <button id="topic-add" type="button">Add</button>
+  </div>
+  <label class="slider-label">Explore
+    <input id="explore-slider" type="range" min="0" max="100" step="5" value="0">
+    <span id="explore-value">0%</span>
+  </label>
+  <div class="filters">
+    <label>Length
+      <select id="filter-length">
+        <option value="any">any</option>
+        <option value="short">under 20 min</option>
+        <option value="long">over 20 min</option>
+      </select>
+    </label>
+    <label>Published
+      <select id="filter-published">
+        <option value="any">any time</option>
+        <option value="last12m">last 12 months</option>
+      </select>
+    </label>
+    <label class="check">Hidden gems
+      <input id="filter-gems" type="checkbox">
+    </label>
+    <label>Count
+      <input id="filter-count" type="number" min="1" max="30" value="12">
+    </label>
+  </div>
+  <button id="discover" class="primary" type="button">Discover <kbd>n</kbd></button>
+  <button id="surprise" type="button">Surprise me</button>
+  <button id="tune-toggle" type="button" aria-expanded="false">Tune</button>
+</header>
+
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+<section id="player-wrap" class="player-wrap hidden">
+  <div class="player-frame">
+    <iframe id="player" title="Video player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="player-meta">
+    <span id="player-title"></span>
+    <a id="player-fallback" href="#" target="_blank" rel="noopener">Open on YouTube</a>
+  </div>
+</section>
+
+<main>
+  <div id="feed" class="feed"></div>
+  <div id="empty" class="empty">
+    <p>No videos yet.</p>
+    <p>Press <kbd>n</kbd> or click <strong>Discover</strong> to build a batch.</p>
+  </div>
+</main>
+
+<aside id="tune" class="tune hidden" aria-label="Tune panel">
+  <section class="panel">
+    <h2>Day parts</h2>
+    <p id="daypart-now" class="muted"></p>
+    <table id="dayparts-table" class="grid-table">
+      <thead><tr><th>Name</th><th>From</th><th>To</th><th>Core</th><th>Nb</th><th>Wild</th><th>Intents</th><th>On</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="hint">Windows use your local clock, in hours. Intents use <code>name:weight</code>, comma separated; weight 0 hides that intent in this window. Put <code>fun</code> topics in the evening and <code>learning</code> topics in the day.</p>
+    <div class="row">
+      <button id="daypart-add" type="button">Add day part</button>
+      <label class="check">Enabled
+        <input id="dayparts-enabled" type="checkbox">
+      </label>
+      <button id="seed-reload" type="button">Reload seed.json</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Quota</h2>
+    <div id="quota-meter" class="meter"><progress id="quota-fill" max="100" value="0"></progress></div>
+    <p id="quota-text" class="muted"></p>
+  </section>
+
+  <section class="panel">
+    <h2>Topics</h2>
+    <table id="topics-table" class="grid-table">
+      <thead><tr><th>Topic</th><th>Lane</th><th>Intent</th><th>On</th><th>Score</th><th>S</th><th>P</th><th>R</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="hint">Score is decayed positives minus decayed negatives. S/P/R = searches / plays / rejects.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Lane shares</h2>
+    <div id="lane-sliders"></div>
+    <p id="lane-effective" class="muted"></p>
+  </section>
+
+  <section class="panel">
+    <h2>Modifiers</h2>
+    <ul id="modifiers-list" class="taglist"></ul>
+    <div class="row">
+      <input id="modifier-input" type="text" placeholder="New modifier">
+      <button id="modifier-add" type="button">Add</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Blocked words</h2>
+    <ul id="words-list" class="taglist"></ul>
+    <div class="row">
+      <input id="word-input" type="text" placeholder="New blocked word">
+      <button id="word-add" type="button">Block</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Title styles</h2>
+    <ul id="styles-list" class="taglist"></ul>
+    <div class="row">
+      <select id="style-kind">
+        <option value="caps">mostly capitals</option>
+        <option value="emoji">emoji-heavy</option>
+        <option value="regex">regex</option>
+      </select>
+      <input id="style-pattern" type="text" placeholder="regex pattern (regex only)">
+      <button id="style-add" type="button">Add</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Blocked channels</h2>
+    <ul id="channels-list" class="taglist"></ul>
+  </section>
+
+  <section class="panel">
+    <h2>Trial topics</h2>
+    <ul id="trials-list" class="taglist"></ul>
+    <h3>Retired</h3>
+    <ul id="retired-list" class="taglist"></ul>
+  </section>
+
+  <section class="panel">
+    <h2>Settings</h2>
+    <div id="settings-list" class="settings"></div>
+    <div class="row">
+      <button id="settings-save" class="primary" type="button">Save settings</button>
+      <button id="learn-now" type="button">Run learning now</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Data</h2>
+    <div class="row">
+      <button id="export" type="button">Export state</button>
+      <button id="import" type="button">Import state</button>
+      <input id="import-file" type="file" accept="application/json" class="hidden">
+    </div>
+    <div class="row">
+      <button id="reset" class="danger" type="button">Reset history</button>
+    </div>
+    <p id="key-status" class="muted"></p>
+  </section>
+</aside>
+
+<script src="/app.js"></script>
+</body>
+</html>

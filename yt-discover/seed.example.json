@@ -1,0 +1,96 @@
+{
+  "_comment": "Starter data for yt-discover. This file is DATA, not code. Edit it, then copy to ~/.config/yt-discover/seed.json and use Tune -> 'Reload seed.json' (additive, safe to repeat). Topics may be plain strings (intent defaults to 'learning') or objects with {text, intent}. 'intent' is a free-text tag; day parts below decide which intents are visible at which hours. Nothing here overrides your UI edits unless you reload.",
+  "topics": {
+    "core": [
+      {"text": "minecraft redstone", "intent": "learning"},
+      {"text": "minecraft mod showcase", "intent": "fun"},
+      {"text": "manhwa analysis", "intent": "fun"},
+      {"text": "webtoon making", "intent": "learning"},
+      {"text": "stop motion animation behind the scenes", "intent": "learning"},
+      {"text": "tabletop rpg worldbuilding", "intent": "learning"},
+      {"text": "web security explained", "intent": "learning"},
+      {"text": "naruto fanfiction", "intent": "fun"},
+      {"text": "manga recap", "intent": "fun"},
+      {"text": "anime discussion", "intent": "fun"}
+    ],
+    "neighbour": [
+      {"text": "game design analysis", "intent": "learning"},
+      {"text": "how old video games were made", "intent": "learning"},
+      {"text": "street food around the world", "intent": "fun"},
+      {"text": "comic book art process", "intent": "learning"},
+      {"text": "anime fan animation", "intent": "fun"},
+      {"text": "light novel review", "intent": "fun"}
+    ],
+    "wildcard": [
+      {"text": "how bridges are built", "intent": "learning"},
+      {"text": "restoration", "intent": "fun"},
+      {"text": "deep sea documentary", "intent": "learning"},
+      {"text": "history lecture", "intent": "learning"},
+      {"text": "craft skills", "intent": "learning"},
+      {"text": "obscure hobbies", "intent": "fun"},
+      {"text": "funny video essay", "intent": "fun"}
+    ]
+  },
+  "query_modifiers": [
+    "explained",
+    "deep dive",
+    "documentary",
+    "lecture",
+    "walkthrough",
+    "case study",
+    "how it works",
+    "interview",
+    "analysis",
+    "behind the scenes",
+    "tips and tricks"
+  ],
+  "avoid_words": [
+    "reborn",
+    "summoner",
+    "cheat",
+    "wish",
+    "nine-tails",
+    "omni-king"
+  ],
+  "dayparts": [
+    {
+      "name": "Learning day",
+      "start_hour": 6,
+      "end_hour": 19,
+      "lane_core": 0.55,
+      "lane_neighbour": 0.30,
+      "lane_wildcard": 0.15,
+      "intent_weights": {"learning": 1.0, "fun": 0.0},
+      "enabled": true
+    },
+    {
+      "name": "Evening fun",
+      "start_hour": 19,
+      "end_hour": 23,
+      "lane_core": 0.45,
+      "lane_neighbour": 0.25,
+      "lane_wildcard": 0.30,
+      "intent_weights": {"fun": 1.0, "learning": 0.0},
+      "enabled": true
+    },
+    {
+      "name": "Late night",
+      "start_hour": 23,
+      "end_hour": 6,
+      "lane_core": 0.35,
+      "lane_neighbour": 0.25,
+      "lane_wildcard": 0.40,
+      "intent_weights": {"fun": 1.0, "learning": 0.0},
+      "enabled": true
+    }
+  ],
+  "blocked_channels": [],
+  "style_features": [],
+  "settings": {
+    "_comment": "See config.py DEFAULTS. Unverified YouTube API details are marked TODO below.",
+    "dayparts_enabled": true,
+    "TODO_search_quota_model": "Google's current quota page says search.list has a separate bucket of 100 calls/day at 1 unit each, while older docs described 100 units per call. Both rails are tracked. Verify at https://developers.google.com/youtube/v3/determine_quota_cost",
+    "TODO_relatedToVideoId": "Removed 2023-08-07 per revision history. Not used anywhere in this app.",
+    "TODO_key_billing": "Verify in Google Cloud Console whether your project needs a billing account; the API has a free quota but Google's signup flow can still ask for a card."
+  }
+}

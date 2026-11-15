@@ -1,0 +1,11 @@
+# Local runtime state — never commit these.
+# discover.db holds your watch history and learned taste; seed.json is personal.
+*.db
+*.db-wal
+*.db-shm
+*.log
+seed.json
+env
+.venv/
+__pycache__/
+*.py[cod]
